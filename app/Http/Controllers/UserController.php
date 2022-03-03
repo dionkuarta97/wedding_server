@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 
 class UserController extends Controller
 {
@@ -31,11 +32,45 @@ class UserController extends Controller
                 'username' => $checkUser['username']
             ];
             $key = config('app.jwt_key');
-            $access_tokeen = JWT::encode($payload, $key, 'HS256');
+            $access_token = JWT::encode($payload, $key, 'HS256');
 
-            return response()->json(['access_token' => $access_tokeen], 200);
+            return response()->json(['access_token' => $access_token], 200);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage(), 500]);
+        }
+    }
+
+    public function create(Request $request)
+    {
+        $validation = Validator::make($request->all(), [
+            'nama' => 'required',
+            'nama_undangan' => 'required',
+            'type' => 'required'
+        ]);
+        if ($validation->fails()) return response()->json($validation->errors(), 400);
+        $payload = [
+            'nama' => $request->nama,
+            'nama_undangan' => $request->nama_undangan,
+            'type' => $request->type
+        ];
+        $key = config('app.jwt_key');
+        $to = JWT::encode($payload, $key, 'HS256');
+
+        return response()->json(['to' => $to], 200);
+    }
+
+    public function read(Request $request)
+    {
+        try {
+
+            $token = $request->to;
+            $key = config('app.jwt_key');
+
+            if (!$token) return response()->json(['message' => 'maaf link anda salah'], 401);
+            $checkToken = JWT::decode($token, new Key($key, "HS256"));
+            return response()->json($checkToken, 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => "maaf link anda salah"], 401);
         }
     }
 }

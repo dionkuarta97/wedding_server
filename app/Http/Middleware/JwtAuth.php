@@ -3,7 +3,6 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Exception;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use Illuminate\Http\Request;
@@ -25,8 +24,8 @@ class JwtAuth
 
         try {
             $checkToken = JWT::decode($token, new Key($key, "HS256"));
-        } catch (Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 500);
+        } catch (\Exception $e) {
+            return response()->json(['message' => "Anda Tidak Dapat Akses"], 401);
         }
 
 

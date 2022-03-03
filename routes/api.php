@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\KomentarController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -16,3 +17,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::post('/login', [UserController::class, 'login']);
+Route::post('/create', [UserController::class, 'create'])->middleware('JwtAuth');
+Route::post('/read', [UserController::class, 'read']);
+Route::post('/komentar', [KomentarController::class, 'komentar']);
+Route::get('/allKomentar', [KomentarController::class, 'allKomentar']);
