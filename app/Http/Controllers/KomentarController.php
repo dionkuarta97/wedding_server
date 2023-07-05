@@ -28,7 +28,7 @@ class KomentarController extends Controller
 
             return response()->json(['message' => 'komentar anda berhasil ditambahkan']);
         } catch (\Exception $e) {
-            return response()->json(['message' => "maaf anda tidak bisa komentar"], 401);
+            return response()->json(['message' => $e->getMessage()], 401);
         }
     }
 
@@ -38,7 +38,7 @@ class KomentarController extends Controller
             $komentar = Komentar::orderBy('id', "DESC")->get();
             return response()->json($komentar, 200);
         } catch (\Exception $e) {
-            return response()->json(['message' => "error dari server"], 500);
+            return response()->json(['message' => $e->getMessage()], 500);
         }
     }
 }
